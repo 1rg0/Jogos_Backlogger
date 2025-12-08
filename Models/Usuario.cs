@@ -1,20 +1,28 @@
-﻿namespace Jogos_Backlogger.Models
+﻿
+namespace Jogos_Backlogger.Models
 {
     public class Usuario
     {
         // Required
-        public int id { get; set; }
-        public required string nome { get; set; }
-        public required DateOnly dataNascimento { get; set; }
-        //public required ENUM genero
-        public required string email { get; set; }
-        public required string senhaHash { get; set; }
-        public required bool ativo { get; set; }
+        public int Id { get; set; }
+        public required string Nome { get; set; }
+        public required DateOnly DataNascimento { get; set; }
+        public required GeneroUsuario Genero { get; set; }
+        public required string Email { get; set; }
+        public required string SenhaHash { get; set; }
+        public bool Ativo { get; set; } = true;
 
         // Not Required
-        public string? telefone { get; set; }
-        public string? imagemPerfil { get; set; }
-        public string? steamId { get; set; }
-        public DateTime? steamIntegradoEm {  get; set; }
+        public string? Telefone { get; set; }
+        public string? ImagemPerfil { get; set; }
+        public string? SteamId { get; set; }
+        public DateTime? SteamIntegradoEm { get; set; }
+    }
+    public enum GeneroUsuario
+    {
+        Masculino,
+        Feminino,
+        Outro,
+        PrefiroNaoInformar
     }
 }

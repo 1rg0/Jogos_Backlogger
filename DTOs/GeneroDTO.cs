@@ -1,6 +1,6 @@
-﻿namespace Jogos_Backlogger.Models
+﻿namespace Jogos_Backlogger.DTOs
 {
-    public class Genero
+    public class GeneroDTO
     {
         public int Id { get; set; }
         public required string Nome { get; set; }

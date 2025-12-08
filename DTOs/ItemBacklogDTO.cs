@@ -1,6 +1,6 @@
-﻿namespace Jogos_Backlogger.Models
+﻿namespace Jogos_Backlogger.DTOs
 {
-    public class ItemBacklog
+    public class ItemBacklogDTO
     {
         public int Id { get; set; }
         public int JogoId { get; set; }

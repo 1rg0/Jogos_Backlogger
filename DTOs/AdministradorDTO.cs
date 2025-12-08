@@ -1,6 +1,6 @@
-﻿namespace Jogos_Backlogger.Models
+﻿namespace Jogos_Backlogger.DTOs
 {
-    public class Administrador
+    public class AdministradorDTO
     {
         public int Id { get; set; }
         public required string Email { get; set; }
