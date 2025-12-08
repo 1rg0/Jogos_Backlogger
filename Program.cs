@@ -1,3 +1,5 @@
+﻿using Jogos_Backlogger.Controllers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jogos_Backlogger
 {
@@ -6,6 +8,13 @@ namespace Jogos_Backlogger
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+                )
+            );
 
             // Add services to the container.
 
@@ -24,10 +33,7 @@ namespace Jogos_Backlogger
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();

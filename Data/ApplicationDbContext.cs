@@ -14,7 +14,7 @@ namespace Jogos_Backlogger.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Jogo> Jogos { get; set; }
         public DbSet<Genero> Generos { get; set; }
-        public DbSet<JogoGenero> JogosGeneros { get; set; }
+        public DbSet<JogoGenero> JogoGeneros { get; set; }
         public DbSet<ItemBacklog> ItemBacklogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +32,29 @@ namespace Jogos_Backlogger.Data
             modelBuilder.Entity<ItemBacklog>().ToTable("ItemBacklog");
 
             // Chave composta
-            modelBuilder.Entity<JogoGenero>().HasKey(jg => new { jg.jogoId, jg.generoId });
+            modelBuilder.Entity<JogoGenero>().HasKey(jg => new { jg.JogoId, jg.GeneroId });
+
+            // JogoGenero relacionamentos
+            modelBuilder.Entity<JogoGenero>()
+                .HasOne(jg => jg.Jogo)
+                .WithMany()
+                .HasForeignKey(jg => jg.JogoId);
+
+            modelBuilder.Entity<JogoGenero>()
+                .HasOne(jg => jg.Genero)
+                .WithMany()
+                .HasForeignKey(jg => jg.GeneroId);
+
+            // ItemBacklog relacionamentos
+            modelBuilder.Entity<ItemBacklog>()
+                .HasOne<Jogo>()
+                .WithMany()
+                .HasForeignKey(ib => ib.JogoId);
+
+            modelBuilder.Entity<ItemBacklog>()
+                .HasOne<Usuario>()
+                .WithMany()
+                .HasForeignKey(ib => ib.UsuarioId);
         }
     }
 }

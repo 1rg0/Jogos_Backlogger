@@ -3,17 +3,17 @@
     public class Jogo
     {
         // Required
-        public int id { get; set; }
-        public required string titulo { get; set; }
-        public required DateOnly dataLancamento { get; set; }
-        public required string desenvolvedora { get; set; }
-        public required string distribuidora { get; set; }
-        public required double horasParaZerar { get; set; }
+        public int Id { get; set; }
+        public required string Titulo { get; set; }
+        public required DateOnly DataLancamento { get; set; }
+        public required string Desenvolvedora { get; set; }
+        public required string Distribuidora { get; set; }
+        public double HorasParaZerar { get; set; } = 0;
 
         // Not Required
-        public string? imagem { get; set; }
-        public string? icone { get; set; }
-        public string? sinopse { get; set; }
+        public string? Imagem { get; set; }
+        public string? Icone { get; set; }
+        public string? Sinopse { get; set; }
 
     }
 }
