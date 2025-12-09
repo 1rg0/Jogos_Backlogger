@@ -9,7 +9,7 @@ namespace Jogos_Backlogger.Models
         public required DateOnly DataNascimento { get; set; }
         public required GeneroUsuario Genero { get; set; }
         public required string Email { get; set; }
-        public required string SenhaHash { get; set; }
+        public required string SenhaHash { get; set; } = string.Empty;
         public bool Ativo { get; set; } = true;
 
         // Not Required

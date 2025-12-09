@@ -5,4 +5,9 @@
         public int Id { get; set; }
         public required string Nome { get; set; }
     }
+
+    public class GeneroCreateDTO
+    {
+        public required string Nome { get; set; }
+    }
 }

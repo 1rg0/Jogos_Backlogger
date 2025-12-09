@@ -10,6 +10,7 @@
         public required string Desenvolvedora { get; set; }
         public required string Distribuidora { get; set; }
         public double HorasParaZerar { get; set; } = 0;
+        public List<string> Generos { get; set; } = new List<string>();
     }
 
     // DTO usado para exibir detalhes de um jogo específico
@@ -24,6 +25,7 @@
         public double HorasParaZerar { get; set; } = 0;
         public string? Imagem { get; set; }
         public string? Sinopse { get; set; }
+        public List<string> Generos { get; set; } = new List<string>();
     }
 
     // DTO usado para criar ou editar um novo jogo
@@ -38,5 +40,6 @@
         public string? Icone { get; set; }
         public string? Imagem { get; set; }
         public string? Sinopse { get; set; }
+        public List<int> GeneroIds { get; set; } = new List<int>();
     }
 }

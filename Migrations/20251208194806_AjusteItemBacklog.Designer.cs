@@ -4,6 +4,7 @@ using Jogos_Backlogger.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jogos_Backlogger.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251208194806_AjusteItemBacklog")]
+    partial class AjusteItemBacklog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,15 +207,13 @@ namespace Jogos_Backlogger.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jogos_Backlogger.Models.Usuario", "Usuario")
+                    b.HasOne("Jogos_Backlogger.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Jogo");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Jogos_Backlogger.Models.JogoGenero", b =>
@@ -224,7 +225,7 @@ namespace Jogos_Backlogger.Migrations
                         .IsRequired();
 
                     b.HasOne("Jogos_Backlogger.Models.Jogo", "Jogo")
-                        .WithMany("JogoGeneros")
+                        .WithMany()
                         .HasForeignKey("JogoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -232,11 +233,6 @@ namespace Jogos_Backlogger.Migrations
                     b.Navigation("Genero");
 
                     b.Navigation("Jogo");
-                });
-
-            modelBuilder.Entity("Jogos_Backlogger.Models.Jogo", b =>
-                {
-                    b.Navigation("JogoGeneros");
                 });
 #pragma warning restore 612, 618
         }

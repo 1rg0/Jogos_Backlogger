@@ -33,28 +33,6 @@ namespace Jogos_Backlogger.Data
 
             // Chave composta
             modelBuilder.Entity<JogoGenero>().HasKey(jg => new { jg.JogoId, jg.GeneroId });
-
-            // JogoGenero relacionamentos
-            modelBuilder.Entity<JogoGenero>()
-                .HasOne(jg => jg.Jogo)
-                .WithMany()
-                .HasForeignKey(jg => jg.JogoId);
-
-            modelBuilder.Entity<JogoGenero>()
-                .HasOne(jg => jg.Genero)
-                .WithMany()
-                .HasForeignKey(jg => jg.GeneroId);
-
-            // ItemBacklog relacionamentos
-            modelBuilder.Entity<ItemBacklog>()
-                .HasOne<Jogo>()
-                .WithMany()
-                .HasForeignKey(ib => ib.JogoId);
-
-            modelBuilder.Entity<ItemBacklog>()
-                .HasOne<Usuario>()
-                .WithMany()
-                .HasForeignKey(ib => ib.UsuarioId);
         }
     }
 }
