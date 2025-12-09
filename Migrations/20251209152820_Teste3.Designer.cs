@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jogos_Backlogger.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251208123707_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251209152820_Teste3")]
+    partial class Teste3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -201,17 +201,21 @@ namespace Jogos_Backlogger.Migrations
 
             modelBuilder.Entity("Jogos_Backlogger.Models.ItemBacklog", b =>
                 {
-                    b.HasOne("Jogos_Backlogger.Models.Jogo", null)
+                    b.HasOne("Jogos_Backlogger.Models.Jogo", "Jogo")
                         .WithMany()
                         .HasForeignKey("JogoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jogos_Backlogger.Models.Usuario", null)
+                    b.HasOne("Jogos_Backlogger.Models.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Jogo");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Jogos_Backlogger.Models.JogoGenero", b =>
@@ -223,7 +227,7 @@ namespace Jogos_Backlogger.Migrations
                         .IsRequired();
 
                     b.HasOne("Jogos_Backlogger.Models.Jogo", "Jogo")
-                        .WithMany()
+                        .WithMany("JogoGeneros")
                         .HasForeignKey("JogoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -231,6 +235,11 @@ namespace Jogos_Backlogger.Migrations
                     b.Navigation("Genero");
 
                     b.Navigation("Jogo");
+                });
+
+            modelBuilder.Entity("Jogos_Backlogger.Models.Jogo", b =>
+                {
+                    b.Navigation("JogoGeneros");
                 });
 #pragma warning restore 612, 618
         }

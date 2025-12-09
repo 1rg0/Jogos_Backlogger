@@ -15,5 +15,7 @@
         public string? Icone { get; set; }
         public string? Sinopse { get; set; }
 
+        public virtual ICollection<JogoGenero> JogoGeneros { get; set; }
+
     }
 }

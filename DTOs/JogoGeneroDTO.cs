@@ -8,9 +8,11 @@ namespace Jogos_Backlogger.DTOs
         public int GeneroId { get; set; }
     }
 
-    public class JogoGeneroDetailDTO : JogoGeneroDTO
+    public class JogoGeneroDetailDTO
     {
-        public Jogo? Jogo { get; set; }
-        public Genero? Genero { get; set; }
+        public int JogoId { get; set; }
+        public int GeneroId { get; set; }
+        public JogoDTO? Jogo { get; set; }
+        public GeneroDTO? Genero { get; set; }
     }
 }
