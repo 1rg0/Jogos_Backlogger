@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "D:\\React Native\\Projetos\\Jogos_Backlogger\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\controllers\\jogocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:controllers\\jogocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,27 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "JogoController.cs",
-              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\JogoController.cs",
-              "RelativeDocumentMoniker": "Controllers\\JogoController.cs",
-              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\JogoController.cs",
-              "RelativeToolTip": "Controllers\\JogoController.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAuwAQBAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T17:46:27.024Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ItemBacklogController.cs",
-              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ItemBacklogController.cs",
-              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
-              "RelativeToolTip": "Controllers\\ItemBacklogController.cs",
-              "ViewState": "AgIAAKcAAAAAAAAAAAAAwFkAAABbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T17:44:44.914Z",
+              "Title": ".gitignore",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\.gitignore",
+              "RelativeDocumentMoniker": ".gitignore",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\.gitignore",
+              "RelativeToolTip": ".gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-12-09T18:06:21.978Z",
               "EditorCaption": ""
             }
           ]
