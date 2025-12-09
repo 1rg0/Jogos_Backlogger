@@ -9,7 +9,6 @@ namespace Jogos_Backlogger.DTOs
         public required DateOnly DataNascimento { get; set; }
         public required GeneroUsuario Genero { get; set; }
         public required string Email { get; set; }
-        public required string SenhaHash { get; set; }
         public bool Ativo { get; set; } = true;
     }
 
@@ -20,7 +19,6 @@ namespace Jogos_Backlogger.DTOs
         public required DateOnly DataNascimento { get; set; }
         public required GeneroUsuario Genero { get; set; }
         public required string Email { get; set; }
-        public required string SenhaHash { get; set; }
         public bool Ativo { get; set; } = true;
         public string? Telefone { get; set; }
         public string? ImagemPerfil { get; set; }
@@ -34,7 +32,7 @@ namespace Jogos_Backlogger.DTOs
         public required DateOnly DataNascimento { get; set; }
         public required GeneroUsuario Genero { get; set; }
         public required string Email { get; set; }
-        public required string SenhaHash { get; set; }
+        public required string Senha { get; set; }
         public string? Telefone { get; set; }
         public string? ImagemPerfil { get; set; }
         public string? SteamId { get; set; }

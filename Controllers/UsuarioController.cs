@@ -18,7 +18,7 @@ namespace Jogos_Backlogger.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> ListarUsuarios()
         {
             var usuariosDTO = await _context.Usuarios
                 .AsNoTracking()
@@ -29,7 +29,6 @@ namespace Jogos_Backlogger.Controllers
                     DataNascimento = u.DataNascimento,
                     Genero = u.Genero,
                     Email = u.Email,
-                    SenhaHash = u.SenhaHash,
                     Ativo = u.Ativo
                 })
                 .ToListAsync();
@@ -38,7 +37,7 @@ namespace Jogos_Backlogger.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDetailDTO>> GetUsuario(int id)
+        public async Task<ActionResult<UsuarioDetailDTO>> DetalhesUsuario(int id)
         {
             var usuario = await _context.Usuarios
                 .AsNoTracking()
@@ -50,7 +49,6 @@ namespace Jogos_Backlogger.Controllers
                     DataNascimento = u.DataNascimento,
                     Genero = u.Genero,
                     Email = u.Email,
-                    SenhaHash = u.SenhaHash,
                     Ativo = u.Ativo,
                     Telefone = u.Telefone,
                     ImagemPerfil = u.ImagemPerfil,
@@ -68,12 +66,14 @@ namespace Jogos_Backlogger.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UsuarioDTO>> CreateUsuario(UsuarioCreateDTO usuarioDTO)
+        public async Task<ActionResult<UsuarioDTO>> CriarUsuario(UsuarioCreateDTO usuarioDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            string senhaHash = BCrypt.Net.BCrypt.HashPassword(usuarioDTO.Senha);
 
             var usuario = new Usuario
             {
@@ -81,7 +81,7 @@ namespace Jogos_Backlogger.Controllers
                 DataNascimento = usuarioDTO.DataNascimento,
                 Genero = usuarioDTO.Genero,
                 Email = usuarioDTO.Email,
-                SenhaHash = usuarioDTO.SenhaHash,
+                SenhaHash = senhaHash,
                 Telefone = usuarioDTO.Telefone,
                 ImagemPerfil = usuarioDTO.ImagemPerfil,
                 SteamId = usuarioDTO.SteamId,
@@ -98,15 +98,14 @@ namespace Jogos_Backlogger.Controllers
                 DataNascimento = usuario.DataNascimento,
                 Genero = usuario.Genero,
                 Email = usuario.Email,
-                SenhaHash = usuario.SenhaHash,
                 Ativo = usuario.Ativo
             };
 
-            return CreatedAtAction(nameof(GetUsuario), new { id = dto.Id }, dto);
+            return CreatedAtAction(nameof(DetalhesUsuario), new { id = dto.Id }, dto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUsuario(int id, UsuarioCreateDTO usuarioDTO)
+        public async Task<IActionResult> AtualizarUsuario(int id, UsuarioCreateDTO usuarioDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -120,11 +119,13 @@ namespace Jogos_Backlogger.Controllers
                 return NotFound();
             }
 
+            var senhaHash = BCrypt.Net.BCrypt.HashPassword(usuarioDTO.Senha);
+
             usuarioExistente.Nome = usuarioDTO.Nome;
             usuarioExistente.DataNascimento = usuarioDTO.DataNascimento;
             usuarioExistente.Genero = usuarioDTO.Genero;
             usuarioExistente.Email = usuarioDTO.Email;
-            usuarioExistente.SenhaHash = usuarioDTO.SenhaHash;
+            usuarioExistente.SenhaHash = senhaHash;
             usuarioExistente.Telefone = usuarioDTO.Telefone;
             usuarioExistente.ImagemPerfil = usuarioDTO.ImagemPerfil;
             usuarioExistente.SteamId = usuarioDTO.SteamId;
@@ -147,9 +148,14 @@ namespace Jogos_Backlogger.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletarUsuario(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var usuario = await _context.Usuarios.FindAsync(id);
 
             if (usuario == null)
@@ -157,7 +163,7 @@ namespace Jogos_Backlogger.Controllers
                 return NotFound();
             }
 
-            _context.Usuarios.Remove(usuario);
+            usuario.Ativo = false;
             await _context.SaveChangesAsync();
 
             return NoContent();
