@@ -12,6 +12,8 @@ namespace Jogos_Backlogger.Models
         public bool Rejogando { get; set; } = false;
         public double HorasJogadas { get; set; } = 0;
 
+        public int VezesFinalizado { get; set; } = 0;
+
         [ForeignKey("JogoId")]
         public virtual Jogo? Jogo { get; set; }
 

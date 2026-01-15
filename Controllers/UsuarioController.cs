@@ -73,6 +73,16 @@ namespace Jogos_Backlogger.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (await _context.Usuarios.AnyAsync(u => u.Email == usuarioDTO.Email))
+            {
+                return Conflict(new { message = "Email já está em uso." });
+            }
+
+            if(await _context.Administradores.AnyAsync(a => a.Email == usuarioDTO.Email))
+            {
+                return BadRequest("Este e-mail já está em uso por um administrador.");
+            }
+
             string senhaHash = BCrypt.Net.BCrypt.HashPassword(usuarioDTO.Senha);
 
             var usuario = new Usuario
@@ -167,6 +177,106 @@ namespace Jogos_Backlogger.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPatch("{id}/alterar-senha")]
+        public async Task<IActionResult> AlterarSenha(int id, [FromBody] AlterarSenhaDTO dto)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            bool senhaValida = BCrypt.Net.BCrypt.Verify(dto.SenhaAtual, usuario.SenhaHash);
+            if (!senhaValida)
+            {
+                return BadRequest("A senha atual está incorreta.");
+            }
+
+            string novaSenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha);
+            usuario.SenhaHash = novaSenhaHash;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/perfil")]
+        public async Task<IActionResult> AtualizarPerfil(int id, [FromBody] UsuarioUpdateDTO dto)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            usuario.Nome = dto.Nome;
+            usuario.Telefone = dto.Telefone;
+            usuario.ImagemPerfil = dto.ImagemPerfil;
+            usuario.SteamId = dto.SteamId;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/foto")]
+        public async Task<IActionResult> UploadFotoPerfil(int id, IFormFile arquivo)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null) return NotFound();
+
+            if (arquivo == null || arquivo.Length == 0)
+                return BadRequest("Nenhum arquivo enviado.");
+
+            var pastaDestino = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagens");
+
+            if (!Directory.Exists(pastaDestino))
+                Directory.CreateDirectory(pastaDestino);
+
+            var nomeArquivo = $"{Guid.NewGuid()}{Path.GetExtension(arquivo.FileName)}";
+            var caminhoCompleto = Path.Combine(pastaDestino, nomeArquivo);
+
+            using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+            {
+                await arquivo.CopyToAsync(stream);
+            }
+
+            if (!string.IsNullOrEmpty(usuario.ImagemPerfil))
+            {
+                try
+                {
+                    var nomeArquivoAntigo = Path.GetFileName(usuario.ImagemPerfil);
+
+                    var caminhoArquivoAntigo = Path.Combine(pastaDestino, nomeArquivoAntigo);
+
+                    if (System.IO.File.Exists(caminhoArquivoAntigo))
+                    {
+                        System.IO.File.Delete(caminhoArquivoAntigo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao apagar imagem antiga: {ex.Message}");
+                }
+            }
+
+            var urlRelativa = $"/imagens/{nomeArquivo}";
+
+            usuario.ImagemPerfil = urlRelativa;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { url = urlRelativa });
         }
 
         private bool UsuarioExiste(int id)

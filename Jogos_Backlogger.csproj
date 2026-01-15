@@ -26,5 +26,6 @@
     <Folder Include="Helpers\" />
     <Folder Include="Repositories\" />
     <Folder Include="Services\" />
+    <Folder Include="wwwroot\imagens\" />
   </ItemGroup>
 </Project>
