@@ -41,6 +41,7 @@ namespace Jogos_Backlogger.Controllers
                     Finalizado = ib.Finalizado,
                     Rejogando = ib.Rejogando,
                     HorasJogadas = ib.HorasJogadas,
+                    VezesFinalizado = ib.VezesFinalizado,
                     Jogo = ib.Jogo == null ? null : new JogoDTO
                     {
                         Id = ib.Jogo.Id,
@@ -76,6 +77,7 @@ namespace Jogos_Backlogger.Controllers
                     Finalizado = ib.Finalizado,
                     Rejogando = ib.Rejogando,
                     HorasJogadas = ib.HorasJogadas,
+                    VezesFinalizado = ib.VezesFinalizado,
                     Jogo = ib.Jogo == null ? null : new JogoDetailDTO
                     {
                         Id = ib.Jogo.Id,
@@ -118,11 +120,12 @@ namespace Jogos_Backlogger.Controllers
             var itemBacklog = new ItemBacklog
             {
                 JogoId = itemBacklogDTO.JogoId,
-                UsuarioId = 1,
+                UsuarioId = itemBacklogDTO.UsuarioId,
                 OrdemId = itemBacklogDTO.OrdemId,
                 Finalizado = itemBacklogDTO.Finalizado,
                 Rejogando = itemBacklogDTO.Rejogando,
-                HorasJogadas = itemBacklogDTO.HorasJogadas
+                HorasJogadas = itemBacklogDTO.HorasJogadas,
+                VezesFinalizado = itemBacklogDTO.VezesFinalizado
             };
 
             _context.ItemBacklogs.Add(itemBacklog);
@@ -136,7 +139,8 @@ namespace Jogos_Backlogger.Controllers
                 OrdemId = itemBacklog.OrdemId,
                 Finalizado = itemBacklog.Finalizado,
                 Rejogando = itemBacklog.Rejogando,
-                HorasJogadas = itemBacklog.HorasJogadas
+                HorasJogadas = itemBacklog.HorasJogadas,
+                VezesFinalizado = itemBacklog.VezesFinalizado
             };
 
             return CreatedAtAction(nameof(CriarItemBacklog), new { id = itemBacklog.Id }, itemBacklogDTO);
@@ -156,6 +160,7 @@ namespace Jogos_Backlogger.Controllers
             itemExistente.Finalizado = itemBacklogDTO.Finalizado;
             itemExistente.Rejogando = itemBacklogDTO.Rejogando;
             itemExistente.HorasJogadas = itemBacklogDTO.HorasJogadas;
+            itemExistente.VezesFinalizado = itemBacklogDTO.VezesFinalizado;
 
             try
             {

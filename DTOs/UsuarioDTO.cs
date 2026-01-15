@@ -37,4 +37,18 @@ namespace Jogos_Backlogger.DTOs
         public string? ImagemPerfil { get; set; }
         public string? SteamId { get; set; }
     }
+
+    public class UsuarioUpdateDTO
+    {
+        public required string Nome { get; set; }
+        public string? Telefone { get; set; }
+        public string? ImagemPerfil { get; set; }
+        public string? SteamId { get; set; }
+    }
+
+    public class AlterarSenhaDTO
+    {
+        public required string SenhaAtual { get; set; }
+        public required string NovaSenha { get; set; }
+    }
 }
