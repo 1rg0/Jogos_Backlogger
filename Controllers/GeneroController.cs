@@ -93,12 +93,6 @@ namespace Jogos_Backlogger.Controllers
             return NoContent();
         }
 
-        //[HttpDelete("{id}")]
-        //public void DesativarGenero(int id)
-        //{
-
-        //}
-
         private bool GeneroExiste(int id)
         {
             return _context.Generos.Any(e => e.Id == id);

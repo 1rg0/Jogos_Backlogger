@@ -22,7 +22,6 @@ namespace Jogos_Backlogger.Controllers
             _context = context;
         }
 
-        // GET: api/Administrador
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AdministradorDTO>>> ListarAdministradores()
         {
@@ -38,7 +37,6 @@ namespace Jogos_Backlogger.Controllers
             return Ok(administradoresDTO);
         }
 
-        // GET: api/Administrador/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AdministradorDTO>> DetalhesAdministrador(int id)
         {
@@ -60,7 +58,6 @@ namespace Jogos_Backlogger.Controllers
             return Ok(administrador);
         }
 
-        // POST: api/Administrador
         [HttpPost]
         public async Task<ActionResult<AdministradorDTO>> CriarAdministrador(AdministradorCreateDTO administradorDTO)
         {
@@ -89,7 +86,6 @@ namespace Jogos_Backlogger.Controllers
             return CreatedAtAction(nameof(DetalhesAdministrador), new { id = dto.Id }, dto);
         }
 
-        // PUT: api/Administrador/5
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarAdministrador(int id, AdministradorCreateDTO administrador)
         {

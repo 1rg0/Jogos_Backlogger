@@ -10,25 +10,21 @@ namespace Jogos_Backlogger.Controllers
     [ApiController]
     public class JogoController : ControllerBase
     {
-        // Variável para a conexão com o banco de dados
         private readonly ApplicationDbContext _context;
 
-        // Método construtor para injetar o contexto do banco de dados
         public JogoController(ApplicationDbContext context)
         {
-            _context = context; // Guarda a conexão com o banco de dados na variável local
+            _context = context;
         }
 
-        // GET: api/Jogo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<JogoDTO>>> ListarJogos()
         {
-            // Retorna a lista de jogos do banco de dados
             var jogosDTO = await _context.Jogos
-                .AsNoTracking() // Evita o rastreamento para melhorar a performance
-                .Include(j => j.JogoGeneros) // Inclui os gêneros relacionados (JOIN)
-                    .ThenInclude(jg => jg.Genero) // Inclui os dados dos gêneros
-                .Select(j => new JogoDTO // Transforma cada jogo em um objeto JogoDTO
+                .AsNoTracking()
+                .Include(j => j.JogoGeneros)
+                    .ThenInclude(jg => jg.Genero)
+                .Select(j => new JogoDTO
                 {
                     Id = j.Id,
                     Titulo = j.Titulo,
@@ -37,24 +33,22 @@ namespace Jogos_Backlogger.Controllers
                     Desenvolvedora = j.Desenvolvedora,
                     Distribuidora = j.Distribuidora,
                     HorasParaZerar = j.HorasParaZerar,
-                    Generos = j.JogoGeneros.Select(jg => jg.Genero.Nome).ToList() // Lista de nomes dos gêneros
+                    Generos = j.JogoGeneros.Select(jg => jg.Genero.Nome).ToList()
                 })
-                .ToListAsync(); // Executa a consulta de forma assíncrona e converte para lista
+                .ToListAsync();
 
-            return Ok(jogosDTO); // Retorna a lista de jogos (JSON) com status 200 OK
+            return Ok(jogosDTO);
         }
 
-        // GET: api/Jogo/5
         [HttpGet("{id}")]
         public async Task<ActionResult<JogoDetailDTO>> DetalhesJogo(int id)
         {
-            // Busca o jogo pelo ID no banco de dados
             var jogo = await _context.Jogos
-                .AsNoTracking() // Evita o rastreamento para melhorar a performance
-                .Include(j => j.JogoGeneros) // Inclui os gêneros relacionados (JOIN)
-                    .ThenInclude(jg => jg.Genero) // Inclui os dados dos gêneros
-                .Where(j => j.Id == id) // Filtra pelo ID do jogo
-                .Select(j => new JogoDetailDTO() // Transforma o jogo em um objeto JogoDetailDTO
+                .AsNoTracking()
+                .Include(j => j.JogoGeneros)
+                    .ThenInclude(jg => jg.Genero)
+                .Where(j => j.Id == id)
+                .Select(j => new JogoDetailDTO()
                 {
                     Id = j.Id,
                     Titulo = j.Titulo,
@@ -65,33 +59,28 @@ namespace Jogos_Backlogger.Controllers
                     HorasParaZerar = j.HorasParaZerar,
                     Imagem = j.Imagem,
                     Sinopse = j.Sinopse,
-                    Generos = j.JogoGeneros.Select(jg => jg.Genero.Nome).ToList() // Lista de nomes dos gêneros
+                    Generos = j.JogoGeneros.Select(jg => jg.Genero.Nome).ToList()
                 })
-                .FirstOrDefaultAsync(); // Executa a consulta de forma assíncrona e pega o primeiro resultado ou retorna nulo
+                .FirstOrDefaultAsync();
 
-            // Se o jogo não for encontrado, retorna 404 Not Found
             if (jogo == null)
             {
                 return NotFound();
             }
 
-            return Ok(jogo); // Retorna o jogo encontrado (JSON) com status 200 OK
+            return Ok(jogo);
         }
 
-        // POST: api/Jogo
         [HttpPost]
         public async Task<ActionResult<JogoDTO>> CriarJogo(JogoCreateDTO jogoDTO)
         {
-            // Valida se os dados enviados respeitam as regras (required etc) definidas no modelo
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Cria um novo objeto Jogo com os dados recebidos
             var jogo = new Jogo()
             {
-                // O Id será gerado automaticamente pelo banco de dados
                 Titulo = jogoDTO.Titulo,
                 Icone = jogoDTO.Icone,
                 DataLancamento = jogoDTO.DataLancamento,
@@ -102,74 +91,59 @@ namespace Jogos_Backlogger.Controllers
                 Sinopse = jogoDTO.Sinopse
             };
 
-            _context.Jogos.Add(jogo); // Adiciona o novo jogo ao contexto do banco de dados
+            _context.Jogos.Add(jogo);
 
-            // Verifica e adiciona os gêneros relacionados, se houver
             if (jogoDTO.GeneroIds != null && jogoDTO.GeneroIds.Any())
             {
-                // Busca os gêneros existentes no banco de dados pelos IDs fornecidos
                 var generosExistentes = await _context.Generos
                     .Where(g => jogoDTO.GeneroIds.Contains(g.Id))
                     .ToListAsync();
 
-                // Cria os vínculos entre o jogo e os gêneros encontrados
                 foreach (var genero in generosExistentes)
                 {
-                    var vinculo = new JogoGenero // Cria o vínculo entre jogo e gênero, gerando o relacionamento many-to-many
+                    var vinculo = new JogoGenero
                     {
                         Jogo = jogo,
                         Genero = genero
                     };
-                    _context.JogoGeneros.Add(vinculo); // Adiciona o vínculo ao contexto do banco de dados
+                    _context.JogoGeneros.Add(vinculo);
                 }
             }
 
-            await _context.SaveChangesAsync(); // Salva as mudanças no banco de dados de forma assíncrona, gerando o Id
+            await _context.SaveChangesAsync();
 
-            // Cria um objeto JogoDTO para retornar na resposta
             var dto = new JogoDTO()
             {
-                Id = jogo.Id, // Usa o Id gerado pelo banco de dados
+                Id = jogo.Id,
                 Titulo = jogoDTO.Titulo,
                 Icone = jogoDTO.Icone,
                 DataLancamento = jogoDTO.DataLancamento,
                 Desenvolvedora = jogoDTO.Desenvolvedora,
                 Distribuidora = jogoDTO.Distribuidora,
                 HorasParaZerar = jogoDTO.HorasParaZerar,
-                Generos = new List<string>() // Simplificação para não fazer outra query agora
+                Generos = new List<string>()
             };
 
-            // Retorna a resposta com status 201 Created, incluindo o local do novo recurso
-            // O primeiro parâmetro gera a URL para acessar o novo jogo criado
-            // O segundo parâmetro passa o objeto DTO como corpo da resposta
-            // O terceiro parâmetro é o objeto JSON retornado
             return CreatedAtAction(nameof(DetalhesJogo), new { id = dto.Id }, dto);
         }
 
-        // PUT: api/Jogo/5
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarJogo(int id, JogoCreateDTO jogoDTO)
         {
-            // Valida se os dados enviados respeitam as regras (required etc) definidas no modelo
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Busca o jogo existente no banco de dados pelo ID
-            // O EF Core rastreia o objeto retornado para detectar mudanças
             var jogoExistente = await _context.Jogos
-                .Include(j => j.JogoGeneros) // Inclui os gêneros relacionados (JOIN)
+                .Include(j => j.JogoGeneros)
                 .FirstOrDefaultAsync(j=> j.Id == id);
 
-            // Retorna 404 Not Found se o jogo não for encontrado
             if (jogoExistente == null)
             {
                 return NotFound(); 
             }
 
-            // Atualiza manualmente os campos do jogo existente com os novos valores
-            // O campo Id não é alterado
             jogoExistente.Titulo = jogoDTO.Titulo;
             jogoExistente.DataLancamento = jogoDTO.DataLancamento;
             jogoExistente.Desenvolvedora = jogoDTO.Desenvolvedora;
@@ -179,34 +153,28 @@ namespace Jogos_Backlogger.Controllers
             jogoExistente.Imagem = jogoDTO.Imagem;
             jogoExistente.Sinopse = jogoDTO.Sinopse;
 
-            // Atualiza os gêneros relacionados
             if (jogoExistente.JogoGeneros != null)
             {
-                // Identifica os gêneros que foram removidos na atualização
                 var generosParaRemover = jogoExistente.JogoGeneros
                     .Where(jg => !jogoDTO.GeneroIds.Contains(jg.GeneroId))
                     .ToList();
 
-                // Remove os gêneros que não estão mais na lista enviada
                 foreach (var item in generosParaRemover)
                 {
                     _context.JogoGeneros.Remove(item);
                 }
 
-                // Identifica os novos gêneros que foram adicionados na atualização
                 var idsAtuais = jogoExistente.JogoGeneros
                     .Select(jg => jg.GeneroId)
                     .ToList();
 
-                // Obtém os IDs de gêneros que estão na lista enviada mas não estão atualmente associados ao jogo
                 var novosIds = jogoDTO.GeneroIds.Except(idsAtuais).ToList();
 
-                // Adiciona os novos gêneros ao jogo
                 foreach (var novoId in novosIds)
                 {
                     if(await _context.Generos.AnyAsync(g => g.Id == novoId))
                     {
-                        jogoExistente.JogoGeneros.Add(new JogoGenero // Cria o vínculo entre jogo e gênero, gerando o relacionamento many-to-many
+                        jogoExistente.JogoGeneros.Add(new JogoGenero
                         {
                             JogoId = id,
                             GeneroId = novoId
@@ -217,14 +185,10 @@ namespace Jogos_Backlogger.Controllers
 
             try
             {
-                // O EF Core rastreia as mudanças automaticamente
-                // Ele gera o comando SQL UPDATE apenas para os campos que foram alterados
-                // E salva as mudanças no banco de dados de forma assíncrona
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Tratamento de erro caso dois usuários tentem atualizar o mesmo registro ao mesmo tempo (raro mas acontece)
                 if (!JogoExiste(id))
                 {
                     return NotFound();
@@ -234,29 +198,25 @@ namespace Jogos_Backlogger.Controllers
                     throw;
                 }
             }
-            return NoContent(); // Retorna 204 No Content indicando que a atualização foi bem-sucedida
+            return NoContent();
         }
 
-        // DELETE: api/Jogo/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarJogo(int id)
         {
-            // Busca o jogo pelo ID no banco de dados
             var jogo = await _context.Jogos.FindAsync(id);
 
-            // Retorna 404 Not Found se o jogo não for encontrado
             if (jogo == null)
             {
                 return NotFound();
             }
 
-            _context.Jogos.Remove(jogo); // Marca o jogo para remoção do banco de dados
-            await _context.SaveChangesAsync(); // Executa a remoção no banco de dados de forma assíncrona
+            _context.Jogos.Remove(jogo);
+            await _context.SaveChangesAsync();
 
-            return NoContent(); // Retorna 204 No Content indicando que a remoção foi bem-sucedida
+            return NoContent();
         }
 
-        // Método auxiliar privado para verificar se um jogo existe
         private bool JogoExiste(int id)
         {
             return _context.Jogos.Any(e => e.Id == id);

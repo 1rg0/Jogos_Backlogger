@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jogos_Backlogger.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251209152820_Teste3")]
-    partial class Teste3
+    [Migration("20260117124856_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,9 @@ namespace Jogos_Backlogger.Migrations
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
+                    b.Property<int>("VezesFinalizado")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("JogoId");
@@ -128,6 +131,9 @@ namespace Jogos_Backlogger.Migrations
 
                     b.Property<string>("Sinopse")
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("SteamId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Titulo")
                         .IsRequired()

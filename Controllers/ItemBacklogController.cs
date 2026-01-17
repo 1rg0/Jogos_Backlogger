@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Jogos_Backlogger.Data;
+using Jogos_Backlogger.DTOs;
+using Jogos_Backlogger.Models;
+using Jogos_Backlogger.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Jogos_Backlogger.Data;
-using Jogos_Backlogger.Models;
-using Jogos_Backlogger.DTOs;
+using System.Text.RegularExpressions;
 
 namespace Jogos_Backlogger.Controllers
 {
@@ -16,10 +13,18 @@ namespace Jogos_Backlogger.Controllers
     public class ItemBacklogController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly SteamService _steamService;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ItemBacklogController(ApplicationDbContext context)
+        public ItemBacklogController(
+            ApplicationDbContext context,
+            SteamService steamService,
+            HltbService hltbService,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _context = context;
+            _steamService = steamService;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         [HttpGet]
@@ -50,7 +55,7 @@ namespace Jogos_Backlogger.Controllers
                         DataLancamento = ib.Jogo.DataLancamento,
                         Desenvolvedora = ib.Jogo.Desenvolvedora,
                         Distribuidora = ib.Jogo.Distribuidora,
-                        HorasParaZerar = ib.Jogo.HorasParaZerar, 
+                        HorasParaZerar = ib.Jogo.HorasParaZerar,
                         Generos = ib.Jogo.JogoGeneros.Select(jg => jg.Genero.Nome).ToList()
                     }
                 })
@@ -88,7 +93,7 @@ namespace Jogos_Backlogger.Controllers
                         Distribuidora = ib.Jogo.Distribuidora,
                         HorasParaZerar = ib.Jogo.HorasParaZerar,
                         Imagem = ib.Jogo.Imagem,
-                        Sinopse = ib.Jogo.Sinopse, 
+                        Sinopse = ib.Jogo.Sinopse,
                         Generos = ib.Jogo.JogoGeneros.Select(jg => jg.Genero.Nome).ToList()
                     }
                 })
@@ -105,17 +110,11 @@ namespace Jogos_Backlogger.Controllers
         [HttpPost]
         public async Task<ActionResult<ItemBacklogDTO>> CriarItemBacklog(ItemBacklogCreateDTO itemBacklogDTO)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var jogoExiste = await _context.Jogos.AnyAsync(j => j.Id == itemBacklogDTO.JogoId);
 
-            if (!jogoExiste)
-            {
-                return BadRequest($"Jogo não encontrado.");
-            }
+            if (!jogoExiste) return BadRequest($"Jogo não encontrado.");
 
             var itemBacklog = new ItemBacklog
             {
@@ -131,18 +130,6 @@ namespace Jogos_Backlogger.Controllers
             _context.ItemBacklogs.Add(itemBacklog);
             await _context.SaveChangesAsync();
 
-            var dto = new ItemBacklogDTO
-            {
-                Id = itemBacklog.Id,
-                JogoId = itemBacklog.JogoId,
-                UsuarioId = itemBacklog.UsuarioId,
-                OrdemId = itemBacklog.OrdemId,
-                Finalizado = itemBacklog.Finalizado,
-                Rejogando = itemBacklog.Rejogando,
-                HorasJogadas = itemBacklog.HorasJogadas,
-                VezesFinalizado = itemBacklog.VezesFinalizado
-            };
-
             return CreatedAtAction(nameof(CriarItemBacklog), new { id = itemBacklog.Id }, itemBacklogDTO);
         }
 
@@ -150,11 +137,7 @@ namespace Jogos_Backlogger.Controllers
         public async Task<IActionResult> AtualizarItemBacklog(int id, ItemBacklogCreateDTO itemBacklogDTO)
         {
             var itemExistente = await _context.ItemBacklogs.FindAsync(id);
-
-            if(itemExistente == null)
-            {
-                return NotFound();
-            }
+            if (itemExistente == null) return NotFound();
 
             itemExistente.OrdemId = itemBacklogDTO.OrdemId;
             itemExistente.Finalizado = itemBacklogDTO.Finalizado;
@@ -168,14 +151,8 @@ namespace Jogos_Backlogger.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ItemBacklogExiste(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!ItemBacklogExiste(id)) return NotFound();
+                else throw;
             }
 
             return NoContent();
@@ -185,16 +162,203 @@ namespace Jogos_Backlogger.Controllers
         public async Task<IActionResult> DeletarItemBacklog(int id)
         {
             var itemBacklog = await _context.ItemBacklogs.FindAsync(id);
-
-            if (itemBacklog == null)
-            {
-                return NotFound();
-            }
+            if (itemBacklog == null) return NotFound();
 
             _context.ItemBacklogs.Remove(itemBacklog);
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPatch("reordenar")]
+        public async Task<IActionResult> ReordenarItens([FromBody] ReordenarItemDTO dto)
+        {
+            var itensNoBanco = await _context.ItemBacklogs
+                .Where(i => dto.ListaIds.Contains(i.Id))
+                .ToListAsync();
+
+            for (int i = 0; i < dto.ListaIds.Count; i++)
+            {
+                var idAtual = dto.ListaIds[i];
+                var item = itensNoBanco.FirstOrDefault(x => x.Id == idAtual);
+
+                if (item != null) item.OrdemId = i + 1;
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPost("importar-steam")]
+        public async Task<IActionResult> ImportarDaSteam([FromBody] ImportarSteamDTO dto)
+        {
+            var jogoLocal = await _context.Jogos
+                .Include(j => j.JogoGeneros)
+                .FirstOrDefaultAsync(j => j.SteamId == dto.SteamId);
+
+            bool precisaBuscarHoras = false;
+
+            if (jogoLocal == null)
+            {
+                var detalhesSteam = await _steamService.GetGameDetails(dto.SteamId);
+                if (detalhesSteam == null) return NotFound("Jogo não encontrado na Steam.");
+
+                double horasEstimadas = 0;
+                precisaBuscarHoras = true;
+
+                var sinopseLimpa = Regex.Replace(detalhesSteam.short_description ?? "", "<.*?>", string.Empty);
+
+                DateTime dataTemp;
+                DateTime.TryParse(detalhesSteam.release_date?.date, out dataTemp);
+                DateOnly dataLancamento = DateOnly.FromDateTime(dataTemp);
+
+                jogoLocal = new Jogo
+                {
+                    SteamId = dto.SteamId,
+                    Titulo = detalhesSteam.name,
+                    Sinopse = sinopseLimpa,
+                    Icone = detalhesSteam.header_image,
+                    Imagem = detalhesSteam.header_image,
+                    Desenvolvedora = detalhesSteam.developers?.FirstOrDefault() ?? "Desconhecida",
+                    Distribuidora = detalhesSteam.publishers?.FirstOrDefault() ?? "",
+                    DataLancamento = dataLancamento,
+                    HorasParaZerar = horasEstimadas,
+                    JogoGeneros = new List<JogoGenero>()
+                };
+
+                if (detalhesSteam.genres != null)
+                {
+                    var todosGenerosLocais = await _context.Generos.ToListAsync();
+                    foreach (var gSteam in detalhesSteam.genres)
+                    {
+                        var generoCorrespondente = todosGenerosLocais
+                            .FirstOrDefault(gl => gl.Nome.ToLower().Contains(gSteam.description.ToLower())
+                                               || gSteam.description.ToLower().Contains(gl.Nome.ToLower()));
+
+                        if (generoCorrespondente != null)
+                        {
+                            jogoLocal.JogoGeneros.Add(new JogoGenero
+                            {
+                                Genero = generoCorrespondente
+                            });
+                        }
+                    }
+                }
+
+                _context.Jogos.Add(jogoLocal);
+                await _context.SaveChangesAsync();
+            }
+
+            var jaNoBacklog = await _context.ItemBacklogs
+                .AnyAsync(i => i.UsuarioId == dto.UsuarioId && i.JogoId == jogoLocal.Id);
+
+            if (jaNoBacklog) return BadRequest("Este jogo já está no seu backlog.");
+
+            var novoItem = new ItemBacklog
+            {
+                UsuarioId = dto.UsuarioId,
+                JogoId = jogoLocal.Id,
+                OrdemId = 1,
+                Finalizado = false,
+                Rejogando = false,
+                HorasJogadas = dto.HorasJogadas,
+                VezesFinalizado = 0
+            };
+
+            _context.ItemBacklogs.Add(novoItem);
+            await _context.SaveChangesAsync();
+
+            if (precisaBuscarHoras)
+            {
+                int jogoIdParaAtualizar = jogoLocal.Id;
+                string nomeParaBuscar = jogoLocal.Titulo;
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        using (var scope = _serviceScopeFactory.CreateScope())
+                        {
+                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                            var hltbService = scope.ServiceProvider.GetRequiredService<HltbService>();
+
+                            var horas = await hltbService.GetEstimativaHoras(nomeParaBuscar);
+
+                            if (horas > 0)
+                            {
+                                var jogoDb = await dbContext.Jogos.FindAsync(jogoIdParaAtualizar);
+                                if (jogoDb != null)
+                                {
+                                    jogoDb.HorasParaZerar = horas;
+                                    await dbContext.SaveChangesAsync();
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"HLTB retornou 0h para {nomeParaBuscar}. Mantido original.");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Falha ao atualizar horas: {ex.Message}");
+                    }
+                });
+            }
+
+            var listaNomesGeneros = jogoLocal.JogoGeneros != null
+                ? jogoLocal.JogoGeneros.Select(jg => jg.Genero!.Nome).ToList()
+                : new List<string>();
+
+            var dtoRetorno = new ItemBacklogDTO
+            {
+                Id = novoItem.Id,
+                UsuarioId = novoItem.UsuarioId,
+                JogoId = novoItem.JogoId,
+                OrdemId = novoItem.OrdemId,
+                Finalizado = novoItem.Finalizado,
+                Rejogando = novoItem.Rejogando,
+                HorasJogadas = novoItem.HorasJogadas,
+                VezesFinalizado = novoItem.VezesFinalizado,
+                Jogo = new JogoDTO
+                {
+                    Id = jogoLocal.Id,
+                    Titulo = jogoLocal.Titulo,
+                    Icone = jogoLocal.Icone,
+                    DataLancamento = jogoLocal.DataLancamento,
+                    Desenvolvedora = jogoLocal.Desenvolvedora,
+                    Distribuidora = jogoLocal.Distribuidora,
+                    HorasParaZerar = 0,
+                    Generos = listaNomesGeneros
+                }
+            };
+
+            return CreatedAtAction(nameof(DetalhesItemBacklog), new { id = novoItem.Id }, dtoRetorno);
+        }
+
+        [HttpPost("importar-lote")]
+        public async Task<IActionResult> ImportarLote([FromBody] ImportarLoteDTO dto)
+        {
+            int sucessos = 0;
+
+            foreach (var itemInfo in dto.Jogos)
+            {
+                var dtoIndividual = new ImportarSteamDTO
+                {
+                    UsuarioId = dto.UsuarioId,
+                    SteamId = itemInfo.SteamId,
+                    HorasJogadas = itemInfo.HorasJogadas
+                };
+
+                var result = await ImportarDaSteam(dtoIndividual);
+
+                if (result is CreatedAtActionResult || result is CreatedResult)
+                {
+                    sucessos++;
+                }
+            }
+
+            return Ok(new { message = $"{sucessos} jogos importados. As horas serão atualizadas em breve." });
         }
 
         private bool ItemBacklogExiste(int id)

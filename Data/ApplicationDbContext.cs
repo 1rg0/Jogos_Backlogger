@@ -7,7 +7,7 @@ namespace Jogos_Backlogger.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         {
-            // Construtor
+
         }
 
         public DbSet<Administrador> Administradores { get; set; }
@@ -19,7 +19,6 @@ namespace Jogos_Backlogger.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Mapeando as entidades com o banco de dados
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Administrador>().ToTable("Administrador");
@@ -31,7 +30,6 @@ namespace Jogos_Backlogger.Data
             modelBuilder.Entity<JogoGenero>().ToTable("JogoGenero");
             modelBuilder.Entity<ItemBacklog>().ToTable("ItemBacklog");
 
-            // Chave composta
             modelBuilder.Entity<JogoGenero>().HasKey(jg => new { jg.JogoId, jg.GeneroId });
         }
     }

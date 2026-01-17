@@ -129,6 +129,9 @@ namespace Jogos_Backlogger.Migrations
                     b.Property<string>("Sinopse")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("SteamId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("longtext");

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Jogos_Backlogger.Migrations
 {
     /// <inheritdoc />
-    public partial class AjusteItemBacklog : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,6 +61,7 @@ namespace Jogos_Backlogger.Migrations
                     Distribuidora = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     HorasParaZerar = table.Column<double>(type: "double", nullable: false),
+                    SteamId = table.Column<int>(type: "int", nullable: true),
                     Imagem = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Icone = table.Column<string>(type: "longtext", nullable: true)
@@ -139,7 +140,8 @@ namespace Jogos_Backlogger.Migrations
                     OrdemId = table.Column<int>(type: "int", nullable: false),
                     Finalizado = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Rejogando = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    HorasJogadas = table.Column<double>(type: "double", nullable: false)
+                    HorasJogadas = table.Column<double>(type: "double", nullable: false),
+                    VezesFinalizado = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
