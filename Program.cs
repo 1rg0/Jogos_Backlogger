@@ -1,5 +1,7 @@
 ﻿using Jogos_Backlogger.Controllers;
+using Jogos_Backlogger.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Jogos_Backlogger
 {
@@ -16,7 +18,8 @@ namespace Jogos_Backlogger
                 )
             );
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -32,6 +35,9 @@ namespace Jogos_Backlogger
                     });
             });
 
+            builder.Services.AddHttpClient<Services.SteamService>();
+            builder.Services.AddHttpClient<Services.HltbService>();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -43,6 +49,25 @@ namespace Jogos_Backlogger
             app.UseCors("PermitirTudo");
 
             app.UseStaticFiles();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+
+                    context.Database.EnsureCreated();
+
+                    DbSeeder.Seed(context);
+                    DbSeeder.SeedUsuario(context);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "Um erro ocorreu ao popular o banco de dados.");
+                }
+            }
 
             app.UseAuthorization();
             app.MapControllers();

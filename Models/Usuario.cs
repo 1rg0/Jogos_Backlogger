@@ -3,7 +3,6 @@ namespace Jogos_Backlogger.Models
 {
     public class Usuario
     {
-        // Required
         public int Id { get; set; }
         public required string Nome { get; set; }
         public required DateOnly DataNascimento { get; set; }
@@ -12,7 +11,6 @@ namespace Jogos_Backlogger.Models
         public required string SenhaHash { get; set; } = string.Empty;
         public bool Ativo { get; set; } = true;
 
-        // Not Required
         public string? Telefone { get; set; }
         public string? ImagemPerfil { get; set; }
         public string? SteamId { get; set; }

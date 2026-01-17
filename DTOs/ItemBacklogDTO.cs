@@ -38,4 +38,23 @@
         public double HorasJogadas { get; set; }
         public int VezesFinalizado { get; set; } = 0;
     }
+
+    public class ImportarSteamDTO
+    {
+        public int SteamId { get; set; }
+        public int UsuarioId { get; set; }
+        public double HorasJogadas { get; set; } = 0;
+    }
+
+    public class ImportarItemInfo
+    {
+        public int SteamId { get; set; }
+        public double HorasJogadas { get; set; }
+    }
+
+    public class ImportarLoteDTO
+    {
+        public int UsuarioId { get; set; }
+        public List<ImportarItemInfo> Jogos { get; set; }
+    }
 }
