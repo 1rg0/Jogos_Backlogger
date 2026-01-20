@@ -44,12 +44,14 @@
         public int SteamId { get; set; }
         public int UsuarioId { get; set; }
         public double HorasJogadas { get; set; } = 0;
+        public string? IconeUrl { get; set; }
     }
 
     public class ImportarItemInfo
     {
         public int SteamId { get; set; }
         public double HorasJogadas { get; set; }
+        public string? IconeUrl { get; set; }
     }
 
     public class ImportarLoteDTO
