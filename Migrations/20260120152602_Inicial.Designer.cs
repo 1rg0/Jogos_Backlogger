@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jogos_Backlogger.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260117124856_Inicial")]
+    [Migration("20260120152602_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
