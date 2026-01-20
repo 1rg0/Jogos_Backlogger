@@ -19,7 +19,6 @@ namespace Jogos_Backlogger.Controllers
         public ItemBacklogController(
             ApplicationDbContext context,
             SteamService steamService,
-            HltbService hltbService,
             IServiceScopeFactory serviceScopeFactory)
         {
             _context = context;
@@ -222,7 +221,7 @@ namespace Jogos_Backlogger.Controllers
                     SteamId = dto.SteamId,
                     Titulo = detalhesSteam.name,
                     Sinopse = sinopseLimpa,
-                    Icone = detalhesSteam.capsule_image,
+                    Icone = !string.IsNullOrEmpty(dto.IconeUrl) ? dto.IconeUrl : detalhesSteam.capsule_image,
                     Imagem = detalhesSteam.header_image,
                     Desenvolvedora = detalhesSteam.developers?.FirstOrDefault() ?? "Desconhecida",
                     Distribuidora = detalhesSteam.publishers?.FirstOrDefault() ?? "",
@@ -253,6 +252,18 @@ namespace Jogos_Backlogger.Controllers
                 _context.Jogos.Add(jogoLocal);
                 await _context.SaveChangesAsync();
             }
+
+            else
+            {
+                var detalhesSteam = await _steamService.GetGameDetails(dto.SteamId);
+                if (detalhesSteam != null)
+                {
+                    jogoLocal.Imagem = detalhesSteam.header_image;
+                    jogoLocal.Icone = !string.IsNullOrEmpty(dto.IconeUrl) ? dto.IconeUrl : detalhesSteam.capsule_image;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
 
             var jaNoBacklog = await _context.ItemBacklogs
                 .AnyAsync(i => i.UsuarioId == dto.UsuarioId && i.JogoId == jogoLocal.Id);
@@ -357,7 +368,8 @@ namespace Jogos_Backlogger.Controllers
                 {
                     UsuarioId = dto.UsuarioId,
                     SteamId = itemInfo.SteamId,
-                    HorasJogadas = itemInfo.HorasJogadas
+                    HorasJogadas = itemInfo.HorasJogadas,
+                    IconeUrl = itemInfo.IconeUrl
                 };
 
                 var result = await ImportarDaSteam(dtoIndividual);

@@ -29,6 +29,7 @@ namespace Jogos_Backlogger.Controllers
                     Id = j.Id,
                     Titulo = j.Titulo,
                     Icone = j.Icone,
+                    Imagem = j.Imagem,
                     DataLancamento = j.DataLancamento,
                     Desenvolvedora = j.Desenvolvedora,
                     Distribuidora = j.Distribuidora,
