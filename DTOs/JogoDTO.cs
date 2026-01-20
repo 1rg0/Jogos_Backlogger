@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public required string Titulo { get; set; }
         public string? Icone { get; set; }
+        public string? Imagem { get; set; }
         public required DateOnly DataLancamento { get; set; }
         public required string Desenvolvedora { get; set; }
         public required string Distribuidora { get; set; }

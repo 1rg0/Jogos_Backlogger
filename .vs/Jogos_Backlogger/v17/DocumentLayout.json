@@ -1,12 +1,71 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\React Native\\Projetos\\Jogos_Backlogger\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\dtos\\jogodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:dtos\\jogodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\dtos\\itembacklogdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:dtos\\itembacklogdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ItemBacklogDTO.cs",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\DTOs\\ItemBacklogDTO.cs",
+              "RelativeDocumentMoniker": "DTOs\\ItemBacklogDTO.cs",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\DTOs\\ItemBacklogDTO.cs",
+              "RelativeToolTip": "DTOs\\ItemBacklogDTO.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAswAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:18:10.686Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "JogoDTO.cs",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\DTOs\\JogoDTO.cs",
+              "RelativeDocumentMoniker": "DTOs\\JogoDTO.cs",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\DTOs\\JogoDTO.cs",
+              "RelativeToolTip": "DTOs\\JogoDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:16:23.127Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ItemBacklogController.cs",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ItemBacklogController.cs",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
+              "RelativeToolTip": "Controllers\\ItemBacklogController.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAADwv0AAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:14:02.894Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

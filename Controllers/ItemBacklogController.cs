@@ -52,6 +52,7 @@ namespace Jogos_Backlogger.Controllers
                         Id = ib.Jogo.Id,
                         Titulo = ib.Jogo.Titulo,
                         Icone = ib.Jogo.Icone,
+                        Imagem = ib.Jogo.Imagem,
                         DataLancamento = ib.Jogo.DataLancamento,
                         Desenvolvedora = ib.Jogo.Desenvolvedora,
                         Distribuidora = ib.Jogo.Distribuidora,
@@ -116,11 +117,15 @@ namespace Jogos_Backlogger.Controllers
 
             if (!jogoExiste) return BadRequest($"Jogo não encontrado.");
 
+            var maiorOrdemAtual = await _context.ItemBacklogs
+                .Where(i => i.UsuarioId == itemBacklogDTO.UsuarioId)
+                .MaxAsync(i => (int?)i.OrdemId) ?? 0;
+
             var itemBacklog = new ItemBacklog
             {
                 JogoId = itemBacklogDTO.JogoId,
                 UsuarioId = itemBacklogDTO.UsuarioId,
-                OrdemId = itemBacklogDTO.OrdemId,
+                OrdemId = maiorOrdemAtual + 1,
                 Finalizado = itemBacklogDTO.Finalizado,
                 Rejogando = itemBacklogDTO.Rejogando,
                 HorasJogadas = itemBacklogDTO.HorasJogadas,
@@ -217,7 +222,7 @@ namespace Jogos_Backlogger.Controllers
                     SteamId = dto.SteamId,
                     Titulo = detalhesSteam.name,
                     Sinopse = sinopseLimpa,
-                    Icone = detalhesSteam.header_image,
+                    Icone = detalhesSteam.capsule_image,
                     Imagem = detalhesSteam.header_image,
                     Desenvolvedora = detalhesSteam.developers?.FirstOrDefault() ?? "Desconhecida",
                     Distribuidora = detalhesSteam.publishers?.FirstOrDefault() ?? "",
@@ -254,11 +259,15 @@ namespace Jogos_Backlogger.Controllers
 
             if (jaNoBacklog) return BadRequest("Este jogo já está no seu backlog.");
 
+            var maiorOrdemAtual = await _context.ItemBacklogs
+                .Where(i => i.UsuarioId == dto.UsuarioId)
+                .MaxAsync(i => (int?)i.OrdemId) ?? 0;
+
             var novoItem = new ItemBacklog
             {
                 UsuarioId = dto.UsuarioId,
                 JogoId = jogoLocal.Id,
-                OrdemId = 1,
+                OrdemId = maiorOrdemAtual + 1,
                 Finalizado = false,
                 Rejogando = false,
                 HorasJogadas = dto.HorasJogadas,
@@ -325,6 +334,7 @@ namespace Jogos_Backlogger.Controllers
                     Id = jogoLocal.Id,
                     Titulo = jogoLocal.Titulo,
                     Icone = jogoLocal.Icone,
+                    Imagem = jogoLocal.Imagem,
                     DataLancamento = jogoLocal.DataLancamento,
                     Desenvolvedora = jogoLocal.Desenvolvedora,
                     Distribuidora = jogoLocal.Distribuidora,
@@ -359,6 +369,54 @@ namespace Jogos_Backlogger.Controllers
             }
 
             return Ok(new { message = $"{sucessos} jogos importados. As horas serão atualizadas em breve." });
+        }
+
+        [HttpPost("sincronizar-horas-steam")]
+        public async Task<IActionResult> SincronizarHorasSteam([FromQuery] int usuarioId)
+        {
+            var usuario = await _context.Usuarios.FindAsync(usuarioId);
+
+            if (usuario == null || string.IsNullOrEmpty(usuario.SteamId))
+            {
+                return BadRequest("Usuário não encontrado ou sem Steam ID vinculado.");
+            }
+
+            var jogosSteam = await _steamService.GetUserLibrary(usuario.SteamId);
+
+            if (jogosSteam == null || !jogosSteam.Any())
+            {
+                return Ok(new { message = "Nenhum jogo encontrado na Steam para sincronizar." });
+            }
+
+            var itensBacklog = await _context.ItemBacklogs
+                .Include(i => i.Jogo)
+                .Where(i => i.UsuarioId == usuarioId && i.Jogo.SteamId != null)
+                .ToListAsync();
+
+            int atualizados = 0;
+
+            foreach (var item in itensBacklog)
+            {
+                var jogoNaSteam = jogosSteam.FirstOrDefault(js => js.appid == item.Jogo.SteamId);
+
+                if (jogoNaSteam != null)
+                {
+                    double horasReais = Math.Round(jogoNaSteam.playtime_forever / 60.0, 1);
+
+                    if (Math.Abs(item.HorasJogadas - horasReais) > 0.1)
+                    {
+                        item.HorasJogadas = horasReais;
+                        atualizados++;
+                    }
+                }
+            }
+
+            if (atualizados > 0)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new { message = $"Sincronização concluída. {atualizados} jogos atualizados.", atualizados });
         }
 
         private bool ItemBacklogExiste(int id)

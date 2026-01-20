@@ -14,6 +14,7 @@ namespace Jogos_Backlogger.DTOs.Steam
         public string detailed_description { get; set; }
         public string short_description { get; set; }
         public string header_image { get; set; }
+        public string capsule_image { get; set; }
         public string website { get; set; }
         public List<string> developers { get; set; }
         public List<string> publishers { get; set; }
