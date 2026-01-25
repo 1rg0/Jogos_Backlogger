@@ -14,16 +14,17 @@ namespace Jogos_Backlogger.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly SteamService _steamService;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly HltbService _hltbService;
 
         public ItemBacklogController(
             ApplicationDbContext context,
             SteamService steamService,
-            IServiceScopeFactory serviceScopeFactory)
+            IServiceScopeFactory serviceScopeFactory,
+            HltbService hltbService)
         {
             _context = context;
             _steamService = steamService;
-            _serviceScopeFactory = serviceScopeFactory;
+            _hltbService = hltbService;
         }
 
         [HttpGet]
@@ -112,9 +113,9 @@ namespace Jogos_Backlogger.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var jogoExiste = await _context.Jogos.AnyAsync(j => j.Id == itemBacklogDTO.JogoId);
+            var jogo = await _context.Jogos.FirstOrDefaultAsync(j => j.Id == itemBacklogDTO.JogoId);
 
-            if (!jogoExiste) return BadRequest($"Jogo não encontrado.");
+            if (jogo == null) return BadRequest($"Jogo não encontrado.");
 
             var maiorOrdemAtual = await _context.ItemBacklogs
                 .Where(i => i.UsuarioId == itemBacklogDTO.UsuarioId)
@@ -133,6 +134,8 @@ namespace Jogos_Backlogger.Controllers
 
             _context.ItemBacklogs.Add(itemBacklog);
             await _context.SaveChangesAsync();
+
+            _ = _hltbService.AtualizarHorasBackground(jogo.Id, jogo.Titulo, itemBacklog.UsuarioId);
 
             return CreatedAtAction(nameof(CriarItemBacklog), new { id = itemBacklog.Id }, itemBacklogDTO);
         }
@@ -237,7 +240,7 @@ namespace Jogos_Backlogger.Controllers
                     {
                         var generoCorrespondente = todosGenerosLocais
                             .FirstOrDefault(gl => gl.Nome.ToLower().Contains(gSteam.description.ToLower())
-                                               || gSteam.description.ToLower().Contains(gl.Nome.ToLower()));
+                                                || gSteam.description.ToLower().Contains(gl.Nome.ToLower()));
 
                         if (generoCorrespondente != null)
                         {
@@ -252,7 +255,6 @@ namespace Jogos_Backlogger.Controllers
                 _context.Jogos.Add(jogoLocal);
                 await _context.SaveChangesAsync();
             }
-
             else
             {
                 var detalhesSteam = await _steamService.GetGameDetails(dto.SteamId);
@@ -263,7 +265,6 @@ namespace Jogos_Backlogger.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-
 
             var jaNoBacklog = await _context.ItemBacklogs
                 .AnyAsync(i => i.UsuarioId == dto.UsuarioId && i.JogoId == jogoLocal.Id);
@@ -288,43 +289,7 @@ namespace Jogos_Backlogger.Controllers
             _context.ItemBacklogs.Add(novoItem);
             await _context.SaveChangesAsync();
 
-            if (precisaBuscarHoras)
-            {
-                int jogoIdParaAtualizar = jogoLocal.Id;
-                string nomeParaBuscar = jogoLocal.Titulo;
-
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        using (var scope = _serviceScopeFactory.CreateScope())
-                        {
-                            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                            var hltbService = scope.ServiceProvider.GetRequiredService<HltbService>();
-
-                            var horas = await hltbService.GetEstimativaHoras(nomeParaBuscar);
-
-                            if (horas > 0)
-                            {
-                                var jogoDb = await dbContext.Jogos.FindAsync(jogoIdParaAtualizar);
-                                if (jogoDb != null)
-                                {
-                                    jogoDb.HorasParaZerar = horas;
-                                    await dbContext.SaveChangesAsync();
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine($"HLTB retornou 0h para {nomeParaBuscar}. Mantido original.");
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Falha ao atualizar horas: {ex.Message}");
-                    }
-                });
-            }
+            _ = _hltbService.AtualizarHorasBackground(jogoLocal.Id, jogoLocal.Titulo, novoItem.UsuarioId);
 
             var listaNomesGeneros = jogoLocal.JogoGeneros != null
                 ? jogoLocal.JogoGeneros.Select(jg => jg.Genero!.Nome).ToList()
@@ -349,7 +314,7 @@ namespace Jogos_Backlogger.Controllers
                     DataLancamento = jogoLocal.DataLancamento,
                     Desenvolvedora = jogoLocal.Desenvolvedora,
                     Distribuidora = jogoLocal.Distribuidora,
-                    HorasParaZerar = 0,
+                    HorasParaZerar = jogoLocal.HorasParaZerar,
                     Generos = listaNomesGeneros
                 }
             };

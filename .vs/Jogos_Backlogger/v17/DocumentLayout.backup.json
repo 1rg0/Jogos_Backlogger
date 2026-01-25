@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "D:\\React Native\\Projetos\\Jogos_Backlogger\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\React Native\\Projetos\\Jogos_Backlogger\\Migrations\\20260125163554_Inicial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Migrations\\20260125163554_Inicial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:controllers\\itembacklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|d:\\react native\\projetos\\jogos_backlogger\\services\\hltbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2B6C60A4-4284-48D3-9477-C4828A4AA3A2}|Jogos_Backlogger.csproj|solutionrelative:services\\hltbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,12 +27,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "20260125163554_Inicial.cs",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Migrations\\20260125163554_Inicial.cs",
+              "RelativeDocumentMoniker": "Migrations\\20260125163554_Inicial.cs",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Migrations\\20260125163554_Inicial.cs",
+              "RelativeToolTip": "Migrations\\20260125163554_Inicial.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T16:35:54.654Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HltbService.cs",
+              "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Services\\HltbService.cs",
+              "RelativeDocumentMoniker": "Services\\HltbService.cs",
+              "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Services\\HltbService.cs",
+              "RelativeToolTip": "Services\\HltbService.cs",
+              "ViewState": "AgIAAEUAAAAAAAAAAAAwwAQAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T16:21:46.951Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ItemBacklogController.cs",
               "DocumentMoniker": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
               "RelativeDocumentMoniker": "Controllers\\ItemBacklogController.cs",
               "ToolTip": "D:\\React Native\\Projetos\\Jogos_Backlogger\\Controllers\\ItemBacklogController.cs",
               "RelativeToolTip": "Controllers\\ItemBacklogController.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAswBQAAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAABwAAAAAAAAAAAAswMkAAABZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-20T15:14:02.894Z",
               "EditorCaption": ""
