@@ -1,4 +1,5 @@
 ﻿using Jogos_Backlogger.Controllers;
+using Jogos_Backlogger.Hubs;
 using Jogos_Backlogger.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -10,6 +11,8 @@ namespace Jogos_Backlogger
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
             options.UseMySql(
@@ -71,6 +74,8 @@ namespace Jogos_Backlogger
 
             app.UseAuthorization();
             app.MapControllers();
+
+            app.MapHub<JogoHub>("/jogoHub");
 
             app.Run();
         }
